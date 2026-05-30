@@ -20,7 +20,7 @@ function UploadPanel() {
     try {
 
       const response = await fetch(
-        "http://127.0.0.1:8000/api/ingestion/upload/",
+        "https://esg-audit-platform.onrender.com/api/ingestion/upload/",
         {
           method: "POST",
           body: formData,
