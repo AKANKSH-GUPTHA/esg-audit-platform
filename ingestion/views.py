@@ -8,8 +8,6 @@ import io
 from emissions.models import EmissionRecord
 from tenants.models import Tenant
 
-from emissions.ai_engine import detect_anomalies
-
 
 class CSVUploadView(APIView):
 
@@ -18,101 +16,95 @@ class CSVUploadView(APIView):
         file = request.FILES.get("file")
 
         if not file:
-
             return Response(
                 {"error": "No file uploaded"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        decoded_file = file.read().decode("utf-8")
+        try:
 
-        csv_data = csv.DictReader(
-            io.StringIO(decoded_file)
-        )
+            decoded_file = file.read().decode("utf-8")
 
-        tenant, created = Tenant.objects.get_or_create(
-    name="Default ESG Corp",
-    defaults={
-        "industry": "Manufacturing"
-    }
-)
+            csv_data = csv.DictReader(
+                io.StringIO(decoded_file)
+            )
 
-        rows = list(csv_data)
+            tenant, created = Tenant.objects.get_or_create(
+                name="Default ESG Corp",
+                defaults={
+                    "industry": "Manufacturing"
+                }
+            )
 
-        emission_values = []
+            created_records = []
 
-        for row in rows:
+            for row in csv_data:
 
-            emission_values.append(
-                float(
-                    row.get(
-                        "calculated_emissions",
-                        0
-                    )
+                emission = EmissionRecord.objects.create(
+
+                    tenant=tenant,
+
+                    activity_type=row.get("activity_type"),
+
+                    scope=row.get("scope"),
+
+                    quantity=float(
+                        row.get("quantity", 0)
+                    ),
+
+                    unit=row.get("unit"),
+
+                    emission_factor=float(
+                        row.get("emission_factor", 0)
+                    ),
+
+                    calculated_emissions=float(
+                        row.get(
+                            "calculated_emissions",
+                            0
+                        )
+                    ),
+
+                    analyst_status=(
+                        "flagged"
+                        if float(
+                            row.get(
+                                "calculated_emissions",
+                                0
+                            )
+                        ) > 1000
+                        else "approved"
+                    ),
+
+                    anomaly_flag=(
+                        float(
+                            row.get(
+                                "calculated_emissions",
+                                0
+                            )
+                        ) > 1000
+                    ),
+
+                    source_reference="CSV-UPLOAD",
                 )
+
+                created_records.append(
+                    emission.id
+                )
+
+            return Response({
+
+                "message":
+                "CSV uploaded successfully",
+
+                "records_created":
+                len(created_records)
+
+            })
+
+        except Exception as e:
+
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
-        anomaly_results = detect_anomalies(
-            emission_values
-        )
-
-        created_records = []
-
-        for index, row in enumerate(rows):
-
-            is_anomaly = anomaly_results[index]
-
-            emission = EmissionRecord.objects.create(
-
-                tenant=tenant,
-
-                activity_type=row.get(
-                    "activity_type"
-                ),
-
-                scope=row.get("scope"),
-
-                quantity=float(
-                    row.get("quantity", 0)
-                ),
-
-                unit=row.get("unit"),
-
-                emission_factor=float(
-                    row.get(
-                        "emission_factor",
-                        0
-                    )
-                ),
-
-                calculated_emissions=float(
-                    row.get(
-                        "calculated_emissions",
-                        0
-                    )
-                ),
-
-                analyst_status=(
-                    "flagged"
-                    if is_anomaly
-                    else "approved"
-                ),
-
-                anomaly_flag=is_anomaly,
-
-                source_reference="CSV-UPLOAD",
-            )
-
-            created_records.append(
-                emission.id
-            )
-
-        return Response({
-
-            "message":
-            "CSV uploaded successfully",
-
-            "records_created":
-            len(created_records)
-
-        })
