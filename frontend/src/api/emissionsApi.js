@@ -1,16 +1,23 @@
-import axios from "axios";
-
-const API = "http://127.0.0.1:8000/api/emissions/";
+const API_BASE_URL =
+  "https://esg-audit-platform.onrender.com";
 
 export const fetchEmissions = async () => {
-  const response = await axios.get(API);
-  return response.data;
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/emissions/`
+  );
+
+  return response.json();
 };
 
 export const approveEmission = async (id) => {
-  const response = await axios.patch(`${API}${id}/`, {
-    analyst_status: "approved",
-  });
 
-  return response.data;
+  const response = await fetch(
+    `${API_BASE_URL}/api/emissions/${id}/approve/`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  return response.json();
 };
