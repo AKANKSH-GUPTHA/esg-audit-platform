@@ -34,7 +34,8 @@ function UploadPanel({ reloadData }) {
       alert("CSV uploaded successfully");
 
       // IMPORTANT
-      reloadData();
+      await reloadData();
+window.location.reload();
 
     } catch (error) {
 
