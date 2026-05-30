@@ -10,10 +10,12 @@ urlpatterns = [
     path(
         "",
         emission_list,
+        name="emission-list"
     ),
 
     path(
-        "<int:pk>/",
+        "<int:pk>/approve/",
         approve_emission,
+        name="approve-emission"
     ),
 ]
