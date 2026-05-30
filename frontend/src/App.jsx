@@ -110,7 +110,7 @@ function App() {
   emissions={emissions}
 />
 
-        <UploadPanel />
+        <UploadPanel reloadData={loadData} />
 
         <EmissionTable
           emissions={emissions}

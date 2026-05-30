@@ -1,15 +1,15 @@
 import { useState } from "react";
 
-function UploadPanel() {
+function UploadPanel({ reloadData }) {
 
   const [file, setFile] = useState(null);
-
-  const [message, setMessage] = useState("");
 
   const handleUpload = async () => {
 
     if (!file) {
-      alert("Please select a CSV file");
+
+      alert("Please select CSV file");
+
       return;
     }
 
@@ -29,22 +29,38 @@ function UploadPanel() {
 
       const data = await response.json();
 
-      setMessage(data.message);
+      console.log(data);
+
+      alert("CSV uploaded successfully");
+
+      // IMPORTANT
+      reloadData();
 
     } catch (error) {
 
       console.error(error);
 
-      setMessage("Upload failed");
-
+      alert("Upload failed");
     }
   };
 
   return (
 
-    <div className="upload-panel">
+    <div
+      style={{
+        background: "#16213E",
+        padding: "24px",
+        borderRadius: "20px",
+        marginBottom: "30px",
+      }}
+    >
 
-      <h2 className="table-title">
+      <h2
+        style={{
+          color: "white",
+          marginBottom: "20px",
+        }}
+      >
         Upload ESG Data
       </h2>
 
@@ -54,20 +70,28 @@ function UploadPanel() {
         onChange={(e) =>
           setFile(e.target.files[0])
         }
+        style={{
+          marginBottom: "20px",
+          color: "white",
+        }}
       />
 
+      <br />
+
       <button
-        className="upload-btn"
         onClick={handleUpload}
+        style={{
+          background: "#00C896",
+          color: "white",
+          border: "none",
+          padding: "12px 24px",
+          borderRadius: "10px",
+          cursor: "pointer",
+          fontWeight: "bold",
+        }}
       >
         Upload CSV
       </button>
-
-      {message && (
-        <p className="upload-message">
-          {message}
-        </p>
-      )}
 
     </div>
   );
