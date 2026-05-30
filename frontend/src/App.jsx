@@ -15,60 +15,39 @@ function App() {
 
   const [emissions, setEmissions] = useState([]);
 
-  // Fetch emissions data
   const loadData = async () => {
 
     try {
 
       const data = await fetchEmissions();
 
+      console.log("Fetched:", data);
+
       setEmissions(data);
 
     } catch (error) {
 
-      console.error("API Error:", error);
-
+      console.error(error);
     }
   };
 
-  // Load on first render
   useEffect(() => {
 
     loadData();
 
   }, []);
 
-  // Dynamic calculations
-  const totalEmissions = emissions
-    .reduce(
+  const totalEmissions =
+    emissions.reduce(
       (sum, item) =>
-        sum +
-        Number(item.calculated_emissions || 0),
+        sum + Number(item.calculated_emissions || 0),
       0
-    )
-    .toFixed(2);
+    );
 
-  const scope1Emissions = emissions
-    .filter(
-      item => item.scope === "scope_1"
-    )
-    .reduce(
-      (sum, item) =>
-        sum +
-        Number(item.calculated_emissions || 0),
-      0
-    )
-    .toFixed(2);
-
-  const anomalyCount = emissions.filter(
-    item => item.anomaly_flag
-  ).length;
-
-  const pendingReviews = emissions.filter(
-    item =>
-      item.analyst_status ===
-      "pending_review"
-  ).length;
+  const anomalies =
+    emissions.filter(
+      (item) => item.anomaly_flag
+    ).length;
 
   return (
 
@@ -90,25 +69,23 @@ function App() {
           />
 
           <StatsCard
-            title="Scope 1"
-            value={`${scope1Emissions} MT`}
+            title="Records"
+            value={emissions.length}
           />
 
           <StatsCard
             title="Anomalies"
-            value={anomalyCount}
+            value={anomalies}
           />
 
           <StatsCard
             title="Pending Reviews"
-            value={pendingReviews}
+            value={anomalies}
           />
 
         </div>
 
-        <DashboardCharts
-  emissions={emissions}
-/>
+        <DashboardCharts emissions={emissions} />
 
         <UploadPanel reloadData={loadData} />
 
