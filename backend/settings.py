@@ -128,3 +128,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 CORS_ALLOW_ALL_ORIGINS = True
+
+import os
+
+ALLOWED_HOSTS = ["*"]
+
+STATIC_URL = 'static/'
+
+STATIC_ROOT = os.path.join(
+    BASE_DIR,
+    'staticfiles'
+)

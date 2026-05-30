@@ -1,0 +1,43 @@
+.timeline-card {
+  background: #162044;
+  padding: 32px;
+  border-radius: 24px;
+  margin-top: 30px;
+}
+
+.timeline-title {
+  color: white;
+  font-size: 40px;
+  margin-bottom: 30px;
+}
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  color: white;
+}
+
+.timeline-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #2EC4B6;
+  margin-top: 8px;
+}
+
+.timeline-item h4 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.timeline-item p {
+  margin-top: 6px;
+  color: #aab4d6;
+}

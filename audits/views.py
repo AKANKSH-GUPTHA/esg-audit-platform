@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework import generics
+from .models import AuditEvent
+from .serializers import AuditEventSerializer
 
-# Create your views here.
+class AuditEventListView(generics.ListAPIView):
+    queryset = AuditEvent.objects.all()
+    serializer_class = AuditEventSerializer

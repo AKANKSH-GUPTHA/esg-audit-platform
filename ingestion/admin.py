@@ -24,6 +24,7 @@ class IngestionBatchAdmin(admin.ModelAdmin):
         "tenant__name",
         "original_file_name",
     )
+    
 @admin.register(RawRecord)
 class RawRecordAdmin(admin.ModelAdmin):
 
