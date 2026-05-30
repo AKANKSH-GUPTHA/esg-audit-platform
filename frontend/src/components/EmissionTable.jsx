@@ -1,36 +1,48 @@
-import { approveEmission } from "../api/emissionsApi";
+function EmissionTable({
+  emissions,
+  reloadData,
+}) {
 
-function EmissionTable({ emissions, reloadData }) {
+  const approveEmission = async (id) => {
 
-  const handleApprove = async (id) => {
     try {
-      await approveEmission(id);
+
+      await fetch(
+        `https://esg-audit-platform.onrender.com/api/emissions/${id}/approve/`,
+        {
+          method: "PATCH",
+        }
+      );
 
       reloadData();
 
     } catch (error) {
+
       console.error(error);
     }
   };
 
   return (
-    <div className="table-card">
 
-      <h2 className="section-title">
-        Emission Records
-      </h2>
+    <div className="table-section">
+
+      <h2>Emission Records</h2>
 
       <table className="emission-table">
 
         <thead>
+
           <tr>
+
             <th>Activity</th>
             <th>Scope</th>
             <th>Emissions</th>
             <th>Status</th>
             <th>Anomaly</th>
             <th>Action</th>
+
           </tr>
+
         </thead>
 
         <tbody>
@@ -39,30 +51,52 @@ function EmissionTable({ emissions, reloadData }) {
 
             <tr key={item.id}>
 
-              <td>{item.activity_type}</td>
+              <td>
+                {item.activity_type}
+              </td>
 
-              <td>{item.scope}</td>
+              <td>
+                {item.scope}
+              </td>
 
-              <td>{item.calculated_emissions}</td>
+              <td>
+                {item.calculated_emissions}
+              </td>
 
               <td>
                 {item.analyst_status}
               </td>
 
               <td>
-                {item.anomaly_flag ? "⚠ Flagged" : "No"}
+                {item.anomaly_flag
+                  ? "⚠ Flagged"
+                  : "No"}
               </td>
 
               <td>
 
-                {item.analyst_status !== "approved" && (
+                {item.analyst_status ===
+                "flagged" ? (
 
                   <button
-                    className="approve-btn"
-                    onClick={() => handleApprove(item.id)}
+                    onClick={() =>
+                      approveEmission(item.id)
+                    }
+                    style={{
+                      background: "#22c55e",
+                      border: "none",
+                      padding: "8px 14px",
+                      color: "white",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                    }}
                   >
                     Approve
                   </button>
+
+                ) : (
+
+                  "Approved"
 
                 )}
 
