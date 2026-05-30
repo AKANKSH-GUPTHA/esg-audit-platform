@@ -30,7 +30,12 @@ class CSVUploadView(APIView):
             io.StringIO(decoded_file)
         )
 
-        tenant = Tenant.objects.first()
+        tenant, created = Tenant.objects.get_or_create(
+    name="Default ESG Corp",
+    defaults={
+        "industry": "Manufacturing"
+    }
+)
 
         rows = list(csv_data)
 
