@@ -1,23 +1,29 @@
-const API_BASE_URL =
-  "https://esg-audit-platform.onrender.com";
+const API_BASE =
+  "https://esg-audit-platform.onrender.com/api/emissions";
 
 export const fetchEmissions = async () => {
 
-  const response = await fetch(
-    `${API_BASE_URL}/api/emissions/`
-  );
+  const response = await fetch(API_BASE);
 
-  return response.json();
+  return await response.json();
 };
 
 export const approveEmission = async (id) => {
 
+  await fetch(`${API_BASE}/${id}/approve/`, {
+    method: "PATCH",
+  });
+};
+
+export const uploadCSV = async (formData) => {
+
   const response = await fetch(
-    `${API_BASE_URL}/api/emissions/${id}/approve/`,
+    `${API_BASE}/upload/`,
     {
-      method: "PATCH",
+      method: "POST",
+      body: formData,
     }
   );
 
-  return response.json();
+  return await response.json();
 };
